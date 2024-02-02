@@ -37,4 +37,10 @@
 3. Delete all the messages from the original message all the way to chunk count
 
 -------------------------------------------------------------------------------
+## To use this project:
+1. Create a discord server
+2. Create a discord bot
+3. Put the channel ID in config.js
+4. Create .env file and put the token as: TOKEN=YOUR_BOT_TOKEN
+
 *Credit to DevDetour who I had this idea from
