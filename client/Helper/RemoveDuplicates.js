@@ -1,20 +1,20 @@
 const RemoveDuplicates = (files) => {
-    const map = {}
-
+    const map = {};
+    const uniqueFiles = [];
+  
     let hasDuplicates = false;
-    for (let index = 0; index < files.length; index++) {
-        const file = files[index]
-        if (map[file.name]) {
+  
+    for (const file of files) {
+      if (!map[file.name]) {
+        map[file.name] = true;
+        uniqueFiles.push(file);
+      } else {
         hasDuplicates = true;
-        files.splice(index, 1);
-        continue
-        }
-
-        map[file.name] = file;
+      }
     }
-
-    return {hasDuplicates: hasDuplicates, files: files}
-}
+  
+    return { hasDuplicates, files: uniqueFiles };
+  };
 
 
 export default RemoveDuplicates

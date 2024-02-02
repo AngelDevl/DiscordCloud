@@ -1,7 +1,8 @@
 import React from "react";
+import { Button } from "react-bootstrap";
 import { FileIcon } from 'react-file-icon';
 
-export default function Files({ files, handleFileDoubleClick }) {
+export default function Files({ files, handleFileDoubleClick, handleFileButton = false, buttonName = "" }) {
     const fileIconStyles = {
       width: 24,
       height: 24,
@@ -20,6 +21,7 @@ export default function Files({ files, handleFileDoubleClick }) {
                 />
                 </li>
                 <span>{file.name} - {file.type}</span>
+                {handleFileButton && <Button onClick={() => handleFileButton(index)}>{buttonName}</Button>}
             </div>
             <br></br>
           </>

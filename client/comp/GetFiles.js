@@ -1,14 +1,32 @@
 import React from 'react'
-import { Container, Row } from 'react-bootstrap'
+import { Container } from 'react-bootstrap'
+import MyToast from './MyToast.js';
 import Files from './Files.js';
-import axios from 'axios';
+import FilesNavBarHandler from './NavBar/FilesNavBarHandler.js';
 
 export default function GetFiles() {
+    const [show, setShow] = React.useState(false);
+    const [toastMessage, setToastMessage] = React.useState("");
     const [files, setFiles] = React.useState(null)
     let clickCount = 0;
 
+    const AlertUser = (message, messageAfter, time) => {
+        setToastMessage(message)
+        setShow(true)
+
+        setTimeout(() => {
+            setShow(false)
+            setToastMessage(messageAfter)
+        }, time)
+    }
+
+    const CloseAlert = () => {
+        setShow(false)
+    }
+    
+    
     React.useEffect(() => {
-        fetch('/get-files', {
+        fetch('/api/files', {
                 method: 'get',
                 headers: {
                 "Content-Type": "application/json"
@@ -22,7 +40,7 @@ export default function GetFiles() {
         })
         .then(data => {
             if (data.files && Array.isArray(data.files) && data.files.length == 0) {
-                return alert("You don't have any files! To upload go to /")
+                return AlertUser("You don't have any files! To upload go to /", "", 10000)
             }
 
             console.log(data.files)
@@ -34,9 +52,32 @@ export default function GetFiles() {
     }, [])
 
     const DownloadFile = (index) => {
-        window.open(`http://noam:5000/get-file/${files[index].name}`);
+        window.open(`http://localhost:5000/api/file/${files[index].name}`);
     }
     
+    const handleDelete = async (index) => {
+        const response = await fetch(`/api/file/${files[index].name}`, {
+            method: 'delete'
+        })
+
+        if (!response.ok) {
+            return AlertUser(`Something went wrong... ${response.status.toString()}`, "", 10000)
+        }
+
+        const res = await response.json()
+
+        if (!res.success) {
+            return AlertUser(`[${files[index].name}] Something went wrong when trying to delete your file...`, "", 10000)
+        }
+        
+        setFiles(prevFiles => {
+            prevFiles.splice(index, 1)
+            return prevFiles
+        })
+
+        return AlertUser(`[${files[index].name}] File has been successfully deleted!`, "", 10000)
+    }
+
     const handleFileDoubleClick = (index) => {
         clickCount++;
     
@@ -50,12 +91,14 @@ export default function GetFiles() {
         }
       };
     
-    return (
+    return (<>
+        <FilesNavBarHandler/>
+        <MyToast message={toastMessage} show={show} onClose={CloseAlert}/>
         <Container style={{ justifyContent: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <h1 style={{paddingBottom: 30}}>Discord Cloud</h1>
             <h2 style={{paddingBottom: 30}}>You Files:</h2>
-            {files && <Files files={files} handleFileDoubleClick={handleFileDoubleClick} />}
+            {files && <Files files={files} handleFileDoubleClick={handleFileDoubleClick} handleFileButton={handleDelete} buttonName='Delete' />}
         </Container>
-    );
+    </>);
 }
   

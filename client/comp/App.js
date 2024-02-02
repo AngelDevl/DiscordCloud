@@ -1,6 +1,4 @@
 import React from 'react'
-import DropFileZone from './DropFileZone.js'
-import { Container, Row } from 'react-bootstrap'
 import { BrowserRouter, Routes , Route } from 'react-router-dom';
 import UploadFiles from './UploadFiles.js';
 import GetFiles from './GetFiles.js'
